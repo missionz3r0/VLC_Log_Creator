@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  </head>
+  <body>
+    <button type="button" onClick="addERInput();">Add ER</button>
+    <button type="button" onClick="generateLogs();">Create Logs</button>
+    <button type="button" onClick="input2JSON();">Export</button>
+    <input type="file" id="fileImport">
+    <table>
+      <thead>
+        <tr>
+          <th>ER Code</th>
+          <th>ER Point Value</th>
+          <th>Bonus Points</th>
+          <th>Item Access</th>
+          <th>Banked?</th>
+        </tr>
+      </thead>
+      <tbody id="ER_Input">
+      </tbody>
+    </table>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Experience Log</h5>
+        <h6 id="expLogSub" class="card-subtitle mb-2 text-muted"></h6>
+        <p id="expLog" class="card-text"></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Loot Log</h5>
+        <h6 id="lootLogSub" class="card-subtitle mb-2 text-muted"></h6>
+        <p id="lootLog" class="card-text"></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Downtime Log</h5>
+        <h6 id="downtimeLogSub" class="card-subtitle mb-2 text-muted"></h6>
+        <p id="downtimeLog" class="card-text"></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Item Access Log</h5>
+        <h6 id="itemAccessLogSub" class="card-subtitle mb-2 text-muted"></h6>
+        <p id="itemAccessLog" class="card-text"></p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Banking Log</h5>
+        <h6 id="bankingLogSub" class="card-subtitle mb-2 text-muted"></h6>
+        <p id="bankingLog" class="card-text"></p>
+      </div>
+    </div>
+  </body>
+</html>
+<script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous">
+</script>
+<script
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous">
+</script>
+<script>
+const erInput = document.getElementById('ER_Input');
+const lvl2loot = {
+  1:  286,
+  2:  321,
+  3:  378,
+  4:  459,
+  5:  562,
+  6:  689,
+  7:  838,
+  8: 1011,
+  9: 1206,
+  10:1425,
+  11:1666,
+  12:1931,
+  13:2218,
+  14:2529,
+  15:2862,
+  16:3219,
+  17:3598,
+  18:4001,
+  19:4426,
+  20:4875,
+  21:4875
+};
+
+const expObjects = {
+  1: {min: 0, max: 3},
+  2: {min: 4, max: 9},
+  3: {min: 10, max: 17},
+  4: {min: 18, max: 27},
+  5: {min: 28, max: 39},
+  6: {min: 40, max: 53},
+  7: {min: 54, max: 69},
+  8: {min: 70, max: 87},
+  9: {min: 88, max: 107},
+  10: {min: 108, max: 129},
+  11: {min: 130, max: 153},
+  12: {min: 154, max: 179},
+  13: {min: 180, max: 207},
+  14: {min: 208, max: 237},
+  15: {min: 238, max: 269},
+  16: {min: 270, max: 303},
+  17: {min: 304, max: 339},
+  18: {min: 340, max: 377},
+  19: {min: 378, max: 417},
+  20: {min: 418, max: 9999},
+  21: {min: 10000, max: 99900000}
+}
+
+const lvl2downtime = {
+  1: 3,
+  2: 3,
+  3: 3,
+  4: 3,
+  5: 3,
+  6: 3,
+  7: 2,
+  8: 2,
+  9: 2,
+  10: 2,
+  11: 2,
+  12: 1,
+  13: 1,
+  14: 1,
+  15: 1,
+  16: 1,
+  17: 1,
+  18: 1,
+  19: 1,
+  20: 1,
+  21: 0
+}
+
+function exp2lvl(experience){
+  for (key in expObjects){
+    if((experience >= expObjects[key]['min']) && (experience <= expObjects[key]['max']))
+      return key;
+  }
+}
+
+function addERInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><input type="text" class="erCode"></td>
+      <td><input type="number" class="points"></td>
+      <td><input type="number" class="bonusPoints"></td>
+      <td><input type="text" class="itemAccess"></td>
+      <td><input type="checkbox" class="isBanked"></td>
+  `;
+
+  erInput.appendChild(newElement);
+  return newElement;
+}
+
+function addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports){
+  if(bankedReportsNeedingApplied.length > 0){
+    for(let i = bankedReportsNeedingApplied.length;i >= 0;i--){
+      let applyAfter = reports[bankedReportsNeedingApplied[i]]['applyAfter'];
+      let indexToInsert = reportOrder.indexOf(applyAfter)+1;
+      if(indexToInsert > 0)
+        reportOrder.splice(indexToInsert, 0, bankedReportsNeedingApplied[i]);
+      else{
+        if(bankedReportsNeedingApplied.indexOf(applyAfter) == -1)
+          bankedReportsNeedingApplied.splice(i, 1);
+      }
+    }
+
+    return addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports);
+  }
+  else{
+    return reportOrder;
+  }
+
+}
+
+function generateLogs(){
+  let totalExp = 0;
+  let expLog = '';
+
+  let totalLoot = 200;
+  let totalLootPoints = 0;
+  let lootLog = '200 - Starting Gold<br>';
+
+  let totalBonusPoints = 0;
+
+  let totalDowntime = 3
+  let downtimeLog = '3 DP - Level 1<br>';
+
+  let accessLog = '';
+
+  let reportOrder = [];
+  let bankedReportsNeedingApplied = [];
+  let reports = {};
+
+  $('#ER_Input tr').each(function(){
+    let erCode = $(this).find('.erCode').val();
+    let expPoints = parseInt($(this).find('.points').val()) || 0;
+    let bonusPoints = parseInt($(this).find('.bonusPoints').val()) || 0;
+    let itemAccess = $(this).find('.itemAccess').val();
+    let isBanked = $(this).find('.isBanked').is(':checked');
+    let isApplied = $(this).find('.isApplied').is(':checked');
+
+    reports[erCode] = {
+      points: parseInt($(this).find('.points').val()) || 0,
+      bonusPoints: parseInt($(this).find('.bonusPoints').val()) || 0,
+      itemAccess: $(this).find('.itemAccess').val(),
+      applyAfter: $(this).find('.applyAfter').val()
+    }
+
+    if(!isBanked){
+      reportOrder.push(erCode);
+    }
+    else if(isApplied){
+      bankedReportsNeedingApplied.push(erCode);
+    }
+  })
+
+  reportOrder = addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports);
+
+  for(report of reportOrder){
+    let erCode = report;
+    let expPoints = reports[report]['points'];
+    let downtimePoints = expPoints;
+    let lootPoints = expPoints;
+    let bonusPoints = reports[report]['bonusPoints'];
+    let itemAccess = reports[report]['itemAccess'];
+
+    downtimeLog += downtimePoints+' DP - '+erCode+'<br>';
+    totalDowntime += downtimePoints;
+
+    let currentLvl = parseInt(exp2lvl(totalExp));
+
+    if(expPoints > 0){
+      let lootPointsApplied = 0;
+      let loot = 0;
+      let lootPointsString = '';
+      let lootGoldString = '';
+      for(let i=currentLvl;i<=parseInt(exp2lvl(totalExp+expPoints));i++){
+        let lootPointsToApply = 0;
+        if((totalLootPoints+lootPoints)>(expObjects[i]['max']+1))
+          lootPointsToApply = expObjects[i]['max']+1-totalLootPoints;
+        else
+          lootPointsToApply = lootPoints-lootPointsApplied;
+
+        if(lootPointsToApply != 0){
+          lootPointsString += lootPointsToApply+' LP (Level '+i+'), ';
+          lootGoldString += lootPointsToApply+'*'+lvl2loot[i]+'+'
+          loot += lootPointsToApply*lvl2loot[i];
+          totalLootPoints += lootPointsToApply;
+          lootPointsApplied += lootPointsToApply;
+        }
+
+        if(i != currentLvl){
+          downtimeLog += lvl2downtime[i]+' DP - Level '+i+'<br>';
+          totalDowntime += lvl2downtime[i];
+        }
+      }
+      lootLog+=lootPointsString.slice(0,-2) +' and '+bonusPoints+' BP - '+erCode+' ('+lootGoldString.slice(0,-1)+'='+loot+')<br>';
+      totalLoot+=loot;
+
+      totalExp += expPoints;
+
+      expLog += expPoints+' XP - '+erCode+'<br>';
+    }
+
+    totalBonusPoints += bonusPoints;
+    if(totalBonusPoints >= 5){
+      let numConvertedLootPoints = (totalBonusPoints-(totalBonusPoints%5))/5;
+      lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+currentLvl+') = ' + (numConvertedLootPoints*lvl2loot[currentLvl])+'<br>';
+      totalLoot += numConvertedLootPoints*lvl2loot[currentLvl];
+    }
+
+    accessLog += erCode+' - '+itemAccess+'<br>';
+  }
+
+  $('#expLog').html(expLog);
+  $('#expLogSub').html('Total: '+totalExp);
+  $('#lootLog').html(lootLog);
+  $('#lootLogSub').html('Total '+totalLoot+'g BP '+totalBonusPoints);
+  $('#downtimeLog').html(downtimeLog);
+  $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total '+totalDowntime+' Days Earned '+(((totalDowntime-(totalDowntime%3))/3)*7));
+  $('#itemAccessLog').html(accessLog);
+}
+
+function input2JSON(){
+  let jsonFile = {errts: []};
+  $('#ER_Input tr').each(function(){
+    jsonFile['errts'].push({
+      ERCode: $(this).find('.erCode').val(),
+      ERPoints: parseInt($(this).find('.points').val()),
+      BonusPoints: parseInt($(this).find('.bonusPoints').val()),
+      ItemAccess: $(this).find('.itemAccess').val()
+    });
+
+  });
+
+  let file = new Blob([JSON.stringify(jsonFile)], {type: "application/json"});
+  let filename  = prompt("File Name:")+'.json';
+  if (window.navigator.msSaveOrOpenBlob) // IE10+
+      window.navigator.msSaveOrOpenBlob(file, filename);
+  else { // Others
+      var a = document.createElement("a"),
+              url = URL.createObjectURL(file);
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(function() {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+      }, 0);
+  }
+}
+
+function JSON2Input(evt){
+  erInput.innerHTML = '';
+  let file = evt.target.files[0];
+  let reader = new FileReader();
+
+  reader.onload = function(progressEvent){
+    let jsonFile = JSON.parse(this.result);
+    for(errt of jsonFile['errts']){
+      let element = addERInput();
+      $(element).find('.erCode').val(errt['ERCode']);
+      $(element).find('.points').val(errt['ERPoints']);
+      $(element).find('.bonusPoints').val(errt['BonusPoints']);
+      $(element).find('.itemAccess').val(errt['ItemAccess']);
+    }
+  }
+
+  reader.readAsText(file);
+}
+
+$('#fileImport').change(JSON2Input);
+
+addERInput();
+
+$('#ER_Input').on('blur', 'input', generateLogs);
+$('#ER_Input').on('change', 'input:checkbox', function(){
+  generateLogs();
+});
+$('#ER_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addERInput()).find('.erCode').focus();
+  }
+})
+</script>
