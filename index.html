@@ -211,6 +211,8 @@ function generateLogs(){
   let bankedReportsNeedingApplied = [];
   let reports = {};
 
+  let bankedLogs = '';
+
   $('#ER_Input tr').each(function(){
     let erCode = $(this).find('.erCode').val();
     let expPoints = parseInt($(this).find('.points').val()) || 0;
@@ -231,6 +233,10 @@ function generateLogs(){
     }
     else if(applyAfter.length > 0){
       bankedReportsNeedingApplied.push(erCode);
+      bankedLogs += erCode +'- applied after '+applyAfter+'<br>';
+    }
+    else{
+      bankedLogs += erCode+'<br>';
     }
   })
 
@@ -301,6 +307,7 @@ function generateLogs(){
   $('#downtimeLog').html(downtimeLog);
   $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total '+totalDowntime+' Days Earned '+(((totalDowntime-(totalDowntime%3))/3)*7));
   $('#itemAccessLog').html(accessLog);
+  $('#bankingLog').html(bankedLogs);
 }
 
 function input2JSON(){
