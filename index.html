@@ -282,6 +282,7 @@ function generateLogs(){
     currentBonusPoints += bonusPoints;
     if(currentBonusPoints >= 5){
       let numConvertedLootPoints = (currentBonusPoints-(currentBonusPoints%5))/5;
+      currentBonusPoints -= numConvertedLootPoints*5;
       lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+currentLvl+') = ' + (numConvertedLootPoints*lvl2loot[currentLvl])+'<br>';
       totalLoot += numConvertedLootPoints*lvl2loot[currentLvl];
     }
