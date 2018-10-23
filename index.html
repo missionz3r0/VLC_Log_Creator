@@ -196,6 +196,7 @@ function generateLogs(){
   let lootLog = '200 - Starting Gold<br>';
 
   let totalBonusPoints = 0;
+  let currentBonusPoints = 0;
 
   let totalDowntime = 3
   let downtimeLog = '3 DP - Level 1<br>';
@@ -278,8 +279,9 @@ function generateLogs(){
     }
 
     totalBonusPoints += bonusPoints;
-    if(totalBonusPoints >= 5){
-      let numConvertedLootPoints = (totalBonusPoints-(totalBonusPoints%5))/5;
+    currentBonusPoints += bonusPoints;
+    if(currentBonusPoints >= 5){
+      let numConvertedLootPoints = (currentBonusPoints-(currentBonusPoints%5))/5;
       lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+currentLvl+') = ' + (numConvertedLootPoints*lvl2loot[currentLvl])+'<br>';
       totalLoot += numConvertedLootPoints*lvl2loot[currentLvl];
     }
