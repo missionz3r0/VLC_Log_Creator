@@ -11,14 +11,15 @@
     <button type="button" onClick="generateLogs();">Create Logs</button>
     <button type="button" onClick="input2JSON();">Export</button>
     <input type="file" id="fileImport">
-    <table>
-      <thead>
+    <table class="table">
+      <thead class="thead-dark">
         <tr>
           <th>ER Code</th>
           <th>ER Point Value</th>
           <th>Bonus Points</th>
           <th>Item Access</th>
           <th>Banked?</th>
+          <th>Apply After</th>
         </tr>
       </thead>
       <tbody id="ER_Input">
@@ -160,6 +161,7 @@ function addERInput(){
       <td><input type="number" class="bonusPoints"></td>
       <td><input type="text" class="itemAccess"></td>
       <td><input type="checkbox" class="isBanked"></td>
+      <td><select class="applyAfter" disabled></select></td>
   `;
 
   erInput.appendChild(newElement);
@@ -168,11 +170,13 @@ function addERInput(){
 
 function addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports){
   if(bankedReportsNeedingApplied.length > 0){
-    for(let i = bankedReportsNeedingApplied.length;i >= 0;i--){
+    for(let i = bankedReportsNeedingApplied.length-1;i >= 0;i--){
       let applyAfter = reports[bankedReportsNeedingApplied[i]]['applyAfter'];
       let indexToInsert = reportOrder.indexOf(applyAfter)+1;
-      if(indexToInsert > 0)
+      if(indexToInsert > 0){
         reportOrder.splice(indexToInsert, 0, bankedReportsNeedingApplied[i]);
+        bankedReportsNeedingApplied.splice(i, 1);
+      }
       else{
         if(bankedReportsNeedingApplied.indexOf(applyAfter) == -1)
           bankedReportsNeedingApplied.splice(i, 1);
@@ -213,19 +217,19 @@ function generateLogs(){
     let bonusPoints = parseInt($(this).find('.bonusPoints').val()) || 0;
     let itemAccess = $(this).find('.itemAccess').val();
     let isBanked = $(this).find('.isBanked').is(':checked');
-    let isApplied = $(this).find('.isApplied').is(':checked');
+    let applyAfter = $(this).find('.applyAfter').val() || '';
 
     reports[erCode] = {
       points: parseInt($(this).find('.points').val()) || 0,
       bonusPoints: parseInt($(this).find('.bonusPoints').val()) || 0,
       itemAccess: $(this).find('.itemAccess').val(),
-      applyAfter: $(this).find('.applyAfter').val()
+      applyAfter: applyAfter
     }
 
     if(!isBanked){
       reportOrder.push(erCode);
     }
-    else if(isApplied){
+    else if(applyAfter.length > 0){
       bankedReportsNeedingApplied.push(erCode);
     }
   })
@@ -353,7 +357,30 @@ $('#fileImport').change(JSON2Input);
 addERInput();
 
 $('#ER_Input').on('blur', 'input', generateLogs);
-$('#ER_Input').on('change', 'input:checkbox', function(){
+$('#ER_Input').on('focus', '.applyAfter', function(){
+  let html = '<option value="None">None</option>';
+  let $applyAfter = $(this);
+  let originalValue = $applyAfter.parent().parent().find('.erCode').val()
+
+  $applyAfter.html('');
+  $('.erCode').each(function(){
+    let val = $(this).val();
+
+    if(val != originalValue)
+      html+= '<option value="'+val+'">'+val+'</option>';
+  });
+
+  $applyAfter.html(html);
+
+});
+$('#ER_Input').on('change', '.isBanked', function(){
+  if($(this).is(':checked')){
+    $(this).parent().parent().find('.applyAfter').prop('disabled', false);
+  }
+  else{
+    $(this).parent().parent().find('.applyAfter').prop('disabled', true);
+    $(this).parent().parent().find('.applyAfter').val('');
+  }
   generateLogs();
 });
 $('#ER_Input').on('keypress', 'input', function(event){
@@ -362,4 +389,6 @@ $('#ER_Input').on('keypress', 'input', function(event){
     $(addERInput()).find('.erCode').focus();
   }
 })
+
+$('#ER_Input').on('change', '.applyAfter', generateLogs);
 </script>
