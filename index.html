@@ -19,6 +19,7 @@
     <table class="table">
       <thead class="thead-dark">
         <tr>
+          <th></th>
           <th>ER Code</th>
           <th>ER Point Value</th>
           <th>Bonus Points</th>
@@ -95,12 +96,19 @@
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
 			  crossorigin="anonymous">
 </script>
+<script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
 <script
         src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous">
 </script>
 <script>
+$('#ER_Input').sortable({
+  update: function(event, ui){
+    generateLogs();
+  }
+});
+
 const erInput = document.getElementById('ER_Input');
 const lvl2loot = {
   1:  286,
@@ -184,6 +192,7 @@ function exp2lvl(experience){
 function addERInput(){
   let newElement = document.createElement("tr");
   newElement.innerHTML = `
+      <td>&#9776;</td>
       <td><input type="text" class="erCode"></td>
       <td><input type="number" class="points"></td>
       <td><input type="number" class="bonusPoints"></td>
