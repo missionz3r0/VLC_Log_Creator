@@ -118,8 +118,8 @@ const expObjects = {
   17: {min: 304, max: 339},
   18: {min: 340, max: 377},
   19: {min: 378, max: 417},
-  20: {min: 418, max: 9999},
-  21: {min: 10000, max: 99900000}
+  20: {min: 418, max: 1000000},
+  21: {min: 1000001, max: 99900000}
 }
 
 const lvl2downtime = {
@@ -283,18 +283,18 @@ function generateLogs(){
       lootLog+=lootPointsString.slice(0,-2) +' and '+bonusPoints+' BP - '+erCode+' ('+lootGoldString.slice(0,-1)+'='+loot+')<br>';
       totalLoot+=loot;
 
+      totalBonusPoints += bonusPoints;
+      currentBonusPoints += bonusPoints;
+      if(currentBonusPoints >= 5){
+        let numConvertedLootPoints = (currentBonusPoints-(currentBonusPoints%5))/5;
+        currentBonusPoints -= numConvertedLootPoints*5;
+        lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+currentLvl+') = ' + (numConvertedLootPoints*lvl2loot[currentLvl])+'<br>';
+        totalLoot += numConvertedLootPoints*lvl2loot[currentLvl];
+      }
+
       totalExp += expPoints;
 
       expLog += expPoints+' XP - '+erCode+'<br>';
-    }
-
-    totalBonusPoints += bonusPoints;
-    currentBonusPoints += bonusPoints;
-    if(currentBonusPoints >= 5){
-      let numConvertedLootPoints = (currentBonusPoints-(currentBonusPoints%5))/5;
-      currentBonusPoints -= numConvertedLootPoints*5;
-      lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+currentLvl+') = ' + (numConvertedLootPoints*lvl2loot[currentLvl])+'<br>';
-      totalLoot += numConvertedLootPoints*lvl2loot[currentLvl];
     }
 
     accessLog += erCode+' - '+itemAccess+'<br>';
