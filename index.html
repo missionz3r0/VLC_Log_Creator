@@ -3,6 +3,11 @@
 <html>
 
   <head>
+    <style>
+      .card-title{
+        color: black;
+      }
+    </style>
     <meta charset="UTF-8">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   </head>
@@ -27,37 +32,57 @@
     </table>
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Experience Log</h5>
-        <h6 id="expLogSub" class="card-subtitle mb-2 text-muted"></h6>
-        <p id="expLog" class="card-text"></p>
+        <a data-toggle="collapse" area-expanded="false" aria-controls="expLog_container" href="#expLog_container">
+          <h5 class="card-title">Experience Log</h5>
+        </a>
+        <div class="collapse" id="expLog_container">
+          <h6 id="expLogSub" class="card-subtitle mb-2 text-muted"></h6>
+          <p id="expLog" class="card-text"></p>
+        </div>
       </div>
     </div>
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Loot Log</h5>
-        <h6 id="lootLogSub" class="card-subtitle mb-2 text-muted"></h6>
-        <p id="lootLog" class="card-text"></p>
+        <a data-toggle="collapse" area-expanded="false" aria-controls="lootLog_container" href="#lootLog_container">
+          <h5 class="card-title">Loot Log</h5>
+        </a>
+        <div class="collapse" id="lootLog_container">
+          <h6 id="lootLogSub" class="card-subtitle mb-2 text-muted"></h6>
+          <p id="lootLog" class="card-text"></p>
+        </div>
       </div>
     </div>
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Downtime Log</h5>
-        <h6 id="downtimeLogSub" class="card-subtitle mb-2 text-muted"></h6>
-        <p id="downtimeLog" class="card-text"></p>
+        <a data-toggle="collapse" area-expanded="false" aria-controls="downtimeLog_container" href="#downtimeLog_container">
+          <h5 class="card-title">Downtime Log</h5>
+        </a>
+        <div class="collapse" id="downtimeLog_container">
+          <h6 id="downtimeLogSub" class="card-subtitle mb-2 text-muted"></h6>
+          <p id="downtimeLog" class="card-text"></p>
+        </div>
       </div>
     </div>
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Item Access Log</h5>
-        <h6 id="itemAccessLogSub" class="card-subtitle mb-2 text-muted"></h6>
-        <p id="itemAccessLog" class="card-text"></p>
+        <a data-toggle="collapse" area-expanded="false" aria-controls="itemLog_container" href="#itemLog_container">
+          <h5 class="card-title">Item Access Log</h5>
+        </a>
+        <div class="collapse" id="itemLog_container">
+          <h6 id="itemAccessLogSub" class="card-subtitle mb-2 text-muted"></h6>
+          <p id="itemAccessLog" class="card-text"></p>
+        </div>
       </div>
     </div>
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">Banking Log</h5>
-        <h6 id="bankingLogSub" class="card-subtitle mb-2 text-muted"></h6>
-        <p id="bankingLog" class="card-text"></p>
+        <a data-toggle="collapse" area-expanded="false" aria-controls="bankingLog_container" href="#bankingLog_container">
+          <h5 class="card-title">Banking Log</h5>
+        </a>
+        <div class="collapse" id="bankingLog_container">
+          <h6 id="bankingLogSub" class="card-subtitle mb-2 text-muted"></h6>
+          <p id="bankingLog" class="card-text"></p>
+        </div>
       </div>
     </div>
   </body>
