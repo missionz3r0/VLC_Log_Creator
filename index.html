@@ -262,7 +262,7 @@ function generateLogs(){
       let lootGoldString = '';
       for(let i=currentLvl;i<=parseInt(exp2lvl(totalExp+expPoints));i++){
         let lootPointsToApply = 0;
-        if((totalLootPoints+lootPoints)>(expObjects[i]['max']+1))
+        if((totalLootPoints+lootPoints-lootPointsApplied)>(expObjects[i]['max']+1))
           lootPointsToApply = expObjects[i]['max']+1-totalLootPoints;
         else
           lootPointsToApply = lootPoints-lootPointsApplied;
