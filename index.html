@@ -30,6 +30,9 @@
       <tbody id="ER_Input">
       </tbody>
     </table>
+    <p>
+      Current Level: <span id="currentLevel">0</span>
+    </p>
     <div class="card">
       <div class="card-body">
         <a data-toggle="collapse" area-expanded="false" aria-controls="expLog_container" href="#expLog_container">
@@ -327,6 +330,7 @@ function generateLogs(){
 
   $('#expLog').html(expLog);
   $('#expLogSub').html('Total: '+totalExp);
+  $('#currentLevel').html(exp2lvl(totalExp));
   $('#lootLog').html(lootLog);
   $('#lootLogSub').html('Total '+totalLoot+'g BP '+totalBonusPoints);
   $('#downtimeLog').html(downtimeLog);
