@@ -25,7 +25,8 @@
           <th>Bonus Points</th>
           <th>Item Access</th>
           <th>Banked?</th>
-          <th>Apply After</th>
+          <!--<th>Apply After</th>-->
+          <th>Delete</th>
         </tr>
       </thead>
       <tbody id="ER_Input">
@@ -192,14 +193,16 @@ function exp2lvl(experience){
 function addERInput(){
   let newElement = document.createElement("tr");
   newElement.innerHTML = `
-      <td>&#9776;</td>
+      <td><span style="cursor: pointer;">&#9776;</span></td>
       <td><input type="text" class="erCode"></td>
       <td><input type="number" class="points"></td>
       <td><input type="number" class="bonusPoints"></td>
       <td><input type="text" class="itemAccess"></td>
       <td><input type="checkbox" class="isBanked"></td>
-      <td><select class="applyAfter" disabled></select></td>
+      <td><span class="deleteER" style="cursor: pointer; color: red;">&#10008;</span></td>
   `;
+
+  //<td><select class="applyAfter" disabled></select></td>
 
   erInput.appendChild(newElement);
   return newElement;
@@ -436,4 +439,10 @@ $('#ER_Input').on('keypress', 'input', function(event){
 })
 
 $('#ER_Input').on('change', '.applyAfter', generateLogs);
+
+$('#ER_Input').on('click', '.deleteER', function(){
+  if(confirm('Delete ER Log named: '+ $(this).closest('tr').find('.erCode').val()+'?')){
+    $(this).closest('tr').remove();
+  }
+});
 </script>
