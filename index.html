@@ -443,6 +443,7 @@ $('#ER_Input').on('change', '.applyAfter', generateLogs);
 $('#ER_Input').on('click', '.deleteER', function(){
   if(confirm('Delete ER Log named: '+ $(this).closest('tr').find('.erCode').val()+'?')){
     $(this).closest('tr').remove();
+    generateLogs();
   }
 });
 </script>
