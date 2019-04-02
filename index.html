@@ -344,7 +344,7 @@ function generateLogs(){
   $('#expLogSub').html('Total: '+totalExp);
   $('#currentLevel').html(exp2lvl(totalExp));
   $('#lootLog').html(lootLog);
-  $('#lootLogSub').html('Total '+totalLoot+'g BP '+totalBonusPoints);
+  $('#lootLogSub').html('Total: '+totalLoot+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
   $('#downtimeLog').html(downtimeLog);
   $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total '+totalDowntime+' Days Earned '+(((totalDowntime-(totalDowntime%3))/3)*7));
   $('#itemAccessLog').html(accessLog);
