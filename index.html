@@ -12,84 +12,173 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   </head>
   <body>
-    <button type="button" onClick="addERInput();">Add ER</button>
-    <button type="button" onClick="generateLogs();">Create Logs</button>
+    <!--<button type="button" onClick="generateERLogs();">Create Logs</button>-->
     <button type="button" onClick="input2JSON();">Export</button>
     <input type="file" id="fileImport">
-    <table class="table">
-      <thead class="thead-dark">
-        <tr>
-          <th></th>
-          <th>ER Code</th>
-          <th>ER Point Value</th>
-          <th>Bonus Points</th>
-          <th>Item Access</th>
-          <th>Banked?</th>
-          <!--<th>Apply After</th>-->
-          <th>Delete</th>
-        </tr>
-      </thead>
-      <tbody id="ER_Input">
-      </tbody>
-    </table>
     <p style="text-align: center;">
       Current Level: <span id="currentLevel">0</span>
     </p>
-    <div class="card">
-      <div class="card-body">
-        <a data-toggle="collapse" area-expanded="false" aria-controls="expLog_container" href="#expLog_container">
-          <h5 class="card-title">Experience Log</h5>
-        </a>
-        <div class="collapse" id="expLog_container">
-          <h6 id="expLogSub" class="card-subtitle mb-2 text-muted"></h6>
-          <p id="expLog" class="card-text"></p>
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="logs-tab" data-toggle="tab" href="#logs" role="tab" aria-controls="logs" aria-selected="true">Logs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="encounterReports-tab" data-toggle="tab" href="#encounterReports" role="tab" aria-controls="encounterReports" aria-selected="false">Encounter Reports</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="gear-tab" data-toggle="tab" href="#gear" role="tab" aria-controls="gear" aria-selected="false">Gear</a>
+      </li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="logs" role="tabpanel" aria-labelledby="logs-tab">
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="expLog_container" href="#expLog_container">
+              <h5 class="card-title">Experience Log</h5>
+            </a>
+            <div class="collapse" id="expLog_container">
+              <h6 id="expLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="expLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="lootLog_container" href="#lootLog_container">
+              <h5 class="card-title">Loot Log</h5>
+            </a>
+            <div class="collapse" id="lootLog_container">
+              <h6 id="lootLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="lootLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="downtimeLog_container" href="#downtimeLog_container">
+              <h5 class="card-title">Downtime Log</h5>
+            </a>
+            <div class="collapse" id="downtimeLog_container">
+              <h6 id="downtimeLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="downtimeLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="retrainingLog_container" href="#retrainingLog_container">
+              <h5 class="card-title">(Re)Training Log</h5>
+            </a>
+            <div class="collapse" id="retrainingLog_container">
+              <h6 id="retrainingLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="retrainingLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="itemLog_container" href="#itemLog_container">
+              <h5 class="card-title">Item Access Log</h5>
+            </a>
+            <div class="collapse" id="itemLog_container">
+              <h6 id="itemAccessLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="itemAccessLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="transactionLog_container" href="#transactionLog_container">
+              <h5 class="card-title">Transaction Log</h5>
+            </a>
+            <div class="collapse" id="transactionLog_container">
+              <h6 id="transactionLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="transactionLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="gearLog_container" href="#gearLog_container">
+              <h5 class="card-title">Gear Log</h5>
+            </a>
+            <div class="collapse" id="gearLog_container">
+              <h6 id="gearLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="gearLog" class="card-text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <a data-toggle="collapse" area-expanded="false" aria-controls="bankingLog_container" href="#bankingLog_container">
+              <h5 class="card-title">Banking Log</h5>
+            </a>
+            <div class="collapse" id="bankingLog_container">
+              <h6 id="bankingLogSub" class="card-subtitle mb-2 text-muted"></h6>
+              <p id="bankingLog" class="card-text"></p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <a data-toggle="collapse" area-expanded="false" aria-controls="lootLog_container" href="#lootLog_container">
-          <h5 class="card-title">Loot Log</h5>
-        </a>
-        <div class="collapse" id="lootLog_container">
-          <h6 id="lootLogSub" class="card-subtitle mb-2 text-muted"></h6>
-          <p id="lootLog" class="card-text"></p>
-        </div>
+      <div class="tab-pane fade" id="encounterReports" role="tabpanel" aria-labelledby="encounterReports-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>ER Code</th>
+              <th>ER Point Value</th>
+              <th>Bonus Points</th>
+              <th>Item Access</th>
+              <th>Banked?</th>
+              <!--<th>Apply After</th>-->
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="ER_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addERInput();">Add Encounter Report</button>
+      </div>
+      <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Date Purchased</th>
+              <th>Cost Per</th>
+              <th>Number Purchased</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="Transaction_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addTransactionInput();">Add Transaction</button>
+      </div>
+      <div class="tab-pane fade" id="gear" role="tabpanel" aria-labelledby="gear-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Container</th>
+              <th>Weight Per</th>
+              <th>Number Remaining</th>
+              <th>Is this a Container?</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="Gear_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addGearInput();">Add Gear</button>
       </div>
     </div>
-    <div class="card">
-      <div class="card-body">
-        <a data-toggle="collapse" area-expanded="false" aria-controls="downtimeLog_container" href="#downtimeLog_container">
-          <h5 class="card-title">Downtime Log</h5>
-        </a>
-        <div class="collapse" id="downtimeLog_container">
-          <h6 id="downtimeLogSub" class="card-subtitle mb-2 text-muted"></h6>
-          <p id="downtimeLog" class="card-text"></p>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <a data-toggle="collapse" area-expanded="false" aria-controls="itemLog_container" href="#itemLog_container">
-          <h5 class="card-title">Item Access Log</h5>
-        </a>
-        <div class="collapse" id="itemLog_container">
-          <h6 id="itemAccessLogSub" class="card-subtitle mb-2 text-muted"></h6>
-          <p id="itemAccessLog" class="card-text"></p>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <a data-toggle="collapse" area-expanded="false" aria-controls="bankingLog_container" href="#bankingLog_container">
-          <h5 class="card-title">Banking Log</h5>
-        </a>
-        <div class="collapse" id="bankingLog_container">
-          <h6 id="bankingLogSub" class="card-subtitle mb-2 text-muted"></h6>
-          <p id="bankingLog" class="card-text"></p>
-        </div>
-      </div>
-    </div>
+
   </body>
 </html>
 <script
@@ -106,11 +195,16 @@
 <script>
 $('#ER_Input').sortable({
   update: function(event, ui){
-    generateLogs();
+    generateERLogs();
   }
 });
 
+$('#Transaction_Input').sortable();
+$('#Gear_Input').sortable();
+
 const erInput = document.getElementById('ER_Input');
+const transactionInput = document.getElementById('Transaction_Input');
+const gearInput = document.getElementById('Gear_Input');
 const lvl2loot = {
   1:  286,
   2:  321,
@@ -208,6 +302,50 @@ function addERInput(){
   return newElement;
 }
 
+function addTransactionInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="text" class="transactionName"></td>
+      <td><input type="date" class="transactionDate" value="`+(new Date().toJSON().slice(0, 10))+`"></td>
+      <td><input type="number" class="transactionCost"></td>
+      <td><input type="number" class="transactionNumberPurchased" value="1"></td>
+      <td><span class="transactionDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
+
+  transactionInput.appendChild(newElement);
+  return newElement;
+}
+
+let gearID = 0;
+
+function addGearInput(){
+  gearID++;
+  let newElement = document.createElement("tr");
+  newElement.id = "gear_"+gearID;
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="text" class="gearName"></td>
+      <td>
+        <select class="gearContainer">
+          <optgroup>
+            <option value="carried">Carried</option>
+            <option value="noncarried">Not Carried</option>
+          </optgroup>
+          <optgroup class="gearAvailableContainers" label="Containers">
+          </optgroup>
+        </select>
+      </td>
+      <td><input type="number" class="gearWeight"></td>
+      <td><input type="number" class="gearNumberRemaining" value="1"></td>
+      <td><input type="checkbox" class="gearIsContainer"></td>
+      <td><span class="gearDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
+
+  gearInput.appendChild(newElement);
+  return newElement;
+}
+
 function addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports){
   if(bankedReportsNeedingApplied.length > 0){
     for(let i = bankedReportsNeedingApplied.length-1;i >= 0;i--){
@@ -231,18 +369,27 @@ function addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied,
 
 }
 
-function generateLogs(){
-  let totalExp = 0;
+var totalExp = 0;
+var totalLoot = 200;
+var totalLootPoints = 0;
+var totalBonusPoints = 0;
+var currentBonusPoints = 0;
+var totalDowntime = 3
+var totalSpent = 0;
+var totalSold = 0;
+
+function generateERLogs(){
+  totalExp = 0;
   let expLog = '';
 
-  let totalLoot = 200;
-  let totalLootPoints = 0;
+  totalLoot = 200;
+  totalLootPoints = 0;
   let lootLog = '200 - Starting Gold<br>';
 
-  let totalBonusPoints = 0;
-  let currentBonusPoints = 0;
+  totalBonusPoints = 0;
+  currentBonusPoints = 0;
 
-  let totalDowntime = 3
+  totalDowntime = 3
   let downtimeLog = '3 DP - Level 1<br>';
 
   let accessLog = '';
@@ -344,11 +491,68 @@ function generateLogs(){
   $('#expLogSub').html('EXP: '+totalExp);
   $('#currentLevel').html(exp2lvl(totalExp));
   $('#lootLog').html(lootLog);
-  $('#lootLogSub').html('Total: '+totalLoot+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+  $('#lootLogSub').html('Total: '+(totalLoot-(totalSpent-totalSold))+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
   $('#downtimeLog').html(downtimeLog);
-  $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total '+totalDowntime+' Days Earned '+(((totalDowntime-(totalDowntime%3))/3)*7));
+  $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total: '+totalDowntime+' Days Earned: '+(((totalDowntime-(totalDowntime%3))/3)*7));
   $('#itemAccessLog').html(accessLog);
   $('#bankingLog').html(bankedLogs);
+
+  generateTransactionLogs();
+}
+
+function generateTransactionLogs(){
+  totalSpent = 0;
+  totalSold = 0;
+
+  let transactionLog = '';
+
+  let transactions = {};
+
+  let gearCarried = '';
+  let gearNonCorried = '';
+
+  $('#Transaction_Input tr').each(function(){
+    let name = $(this).find('.transactionName').val();
+    let date = $(this).find('.transactionDate').val();
+    let cost = parseFloat($(this).find('.transactionCost').val()) || 0;
+    let numberPurchased = parseInt($(this).find('.transactionNumberPurchased').val()) || 0
+
+    if(!(date in transactions)){
+      transactions[date] = [];
+    }
+
+    transactions[date].push({
+      "name": name,
+      "cost": cost,
+    });
+
+  });
+
+  for (dateString in transactions){
+    let transactionDate = new Date(dateString);
+    transactionLog += (transactionDate.getMonth()+1)+'/'+transactionDate.getDate()+'/'+transactionDate.getFullYear()+' - ';
+
+    transactionLog += transactions[dateString].map(
+      function(transaction){
+        totalSpent += transaction.cost * transaction.numberPurchased;
+        return transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost+')';
+      }
+    ).join(', ');
+
+    transactionLog += '<br>'
+  }
+
+
+  $('#lootLogSub').html('Total: '+(totalLoot-totalSpent)+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+
+  $('#transactionLogSub').html('Spent: '+totalSpent+', Sold: '+totalSold+', Net Loss: '+(totalSpent-totalSold));
+  $('#transactionLog').html(transactionLog);
+
+  $('#gearLog').html('Carried:<br>'+gearCarried+'<br><br>Not Carried:<br>'+gearNonCorried);
+}
+
+function generateGearLogs(){
+
 }
 
 function input2JSON(){
@@ -403,8 +607,10 @@ function JSON2Input(evt){
 $('#fileImport').change(JSON2Input);
 
 addERInput();
+addTransactionInput();
+addGearInput();
 
-$('#ER_Input').on('blur', 'input', generateLogs);
+$('#ER_Input').on('blur', 'input', generateERLogs);
 $('#ER_Input').on('focus', '.applyAfter', function(){
   let html = '<option value="None">None</option>';
   let $applyAfter = $(this);
@@ -422,14 +628,15 @@ $('#ER_Input').on('focus', '.applyAfter', function(){
 
 });
 $('#ER_Input').on('change', '.isBanked', function(){
+  let $parent = $(this).parent().parent();
   if($(this).is(':checked')){
-    $(this).parent().parent().find('.applyAfter').prop('disabled', false);
+    $parent.find('.applyAfter').prop('disabled', false);
   }
   else{
-    $(this).parent().parent().find('.applyAfter').prop('disabled', true);
-    $(this).parent().parent().find('.applyAfter').val('');
+    $parent.find('.applyAfter').prop('disabled', true);
+    $parent.find('.applyAfter').val('');
   }
-  generateLogs();
+  generateERLogs();
 });
 $('#ER_Input').on('keypress', 'input', function(event){
   let keycode = (event.keyCode ? event.keyCode : event.which);
@@ -438,12 +645,49 @@ $('#ER_Input').on('keypress', 'input', function(event){
   }
 })
 
-$('#ER_Input').on('change', '.applyAfter', generateLogs);
+$('#ER_Input').on('change', '.applyAfter', generateERLogs);
 
 $('#ER_Input').on('click', '.deleteER', function(){
   if(confirm('Delete ER Log named: '+ $(this).closest('tr').find('.erCode').val()+'?')){
     $(this).closest('tr').remove();
-    generateLogs();
+    generateERLogs();
   }
+});
+
+$('#Transaction_Input').on('blur', 'input', generateTransactionLogs);
+
+$('#Transaction_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addTransactionInput()).find('.erCode').focus();
+  }
+})
+
+$('#Transaction_Input').on('click', '.transactionDelete', function(){
+  if(confirm('Delete Transaction Log named: '+ $(this).closest('tr').find('.transactionName').val()+'?')){
+    $(this).closest('tr').remove();
+    generateTransactionLogs();
+  }
+});
+
+$('#Gear_Input').on('focus', '.gearContainer', function(){
+  let html = '';
+
+  let id = $(this).closest('tr').prop('id');
+
+  let $containers = $(this).find('.gearAvailableContainers')
+
+  $containers.html('');
+  $(gearInput).find('tr').each(function(){
+    let $this = $(this);
+    let name = $this.find('.gearName').val();
+
+    if($this.find('.gearIsContainer').is(':checked') && id != $this.prop('id')){
+      html+= '<option value="'+$(this).prop('id')+'">'+name+'</option>';
+    }
+  });
+
+  $containers.html(html);
+
 });
 </script>
