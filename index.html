@@ -531,7 +531,7 @@ function generateTransactionLogs(){
 
   for (dateString in transactions){
     let transactionDate = new Date(dateString);
-    transactionLog += (transactionDate.getMonth()+1)+'/'+transactionDate.getDate()+'/'+transactionDate.getFullYear()+' - ';
+    transactionLog += (transactionDate.getMonth()+1)+'/'+transactionDate.getDate()+1+'/'+transactionDate.getFullYear()+' - ';
 
     transactionLog += transactions[dateString].map(
       function(transaction){
