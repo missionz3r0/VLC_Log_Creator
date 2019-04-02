@@ -536,7 +536,7 @@ function generateTransactionLogs(){
     transactionLog += transactions[dateString].map(
       function(transaction){
         totalSpent += transaction.cost * transaction.numberPurchased;
-        return transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost+')';
+        return transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost * transaction.numberPurchased+')';
       }
     ).join(', ');
 
