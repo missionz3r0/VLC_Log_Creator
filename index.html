@@ -600,12 +600,13 @@ function JSON2Input(evt){
       $(element).find('.bonusPoints').val(errt['BonusPoints']);
       $(element).find('.itemAccess').val(errt['ItemAccess']);
     }
+    
+     generateERLogs();
+     generateTransactionLogs();
+     generateGearLogs();
   }
 
   reader.readAsText(file);
-  generateERLogs();
-  generateTransactionLogs();
-  generateGearLogs();
 }
 
 $('#fileImport').change(JSON2Input);
