@@ -603,6 +603,9 @@ function JSON2Input(evt){
   }
 
   reader.readAsText(file);
+  generateERLogs();
+  generateTransactionLogs();
+  generateGearLogs();
 }
 
 $('#fileImport').change(JSON2Input);
