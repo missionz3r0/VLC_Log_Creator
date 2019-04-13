@@ -508,9 +508,6 @@ function generateTransactionLogs(){
 
   let transactions = {};
 
-  let gearCarried = '';
-  let gearNonCorried = '';
-
   $('#Transaction_Input tr').each(function(){
     let name = $(this).find('.transactionName').val();
     let date = $(this).find('.transactionDate').val();
@@ -535,7 +532,10 @@ function generateTransactionLogs(){
 
     transactionLog += transactions[dateString].map(
       function(transaction){
-        totalSpent += transaction.cost * transaction.numberPurchased;
+        if(transaction.cost >= 0)
+          totalSpent += transaction.cost * transaction.numberPurchased;
+        else
+          totalSold -= transaction.cost *transaction.numberPurchased;
         return transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost * transaction.numberPurchased+')';
       }
     ).join(', ');
@@ -548,11 +548,31 @@ function generateTransactionLogs(){
 
   $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+', Net Loss: '+(totalSpent-totalSold))+'g';
   $('#transactionLog').html(transactionLog);
-
-  $('#gearLog').html('Carried:<br>'+gearCarried+'<br><br>Not Carried:<br>'+gearNonCorried);
 }
 
 function generateGearLogs(){
+  let totalWeight = 0;
+  let containers = [];
+
+  $('#Gear_Input tr').each(function(){
+    $this = $(this);
+    let name = $this.find('.gearName').val();
+    let container = $this.find('.gearContainer').val();
+    let weight = parseFloat($this.find('.gearWeight').val()) || 0;
+    let numberRemaining = parseInt($this.find('.gearNumberRemaining').val()) || 0
+    let isContainer = $this.find('.gearIsContainer').is(':checked');
+
+    if(isContainer){
+
+    }
+
+    transactions[date].push({
+      "name": name,
+      "cost": cost,
+      "numberPurchased": numberPurchased
+    });
+
+  });
 
 }
 
@@ -565,7 +585,7 @@ function input2JSON(){
       ERPoints: parseInt($this.find('.points').val()),
       BonusPoints: parseInt($this.find('.bonusPoints').val()),
       ItemAccess: $this.find('.itemAccess').val(),
-      IsBanked: $this.find('.isBanked').val()
+      IsBanked: $this.find('.isBanked').is(':checked');
     });
   });
 
@@ -586,7 +606,7 @@ function input2JSON(){
       Container: $this.find('.gearContainer').val(),
       Weight: parseInt($this.find('.gearWeight').val()),
       NumberRemaining: $this.find('.gearNumberRemaining').val(),
-      IsContainer: $this.find('.gearIsContainer').val()
+      IsContainer: $this.find('.gearIsContainer').is(':checked')
     });
   });
 
