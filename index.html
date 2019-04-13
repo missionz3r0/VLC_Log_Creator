@@ -584,7 +584,7 @@ function generateGearLogs(){
   for (container in containers){
     let containerHTML = container.name+':';
     for(item in gear[container]){
-      if item.numberRemaining == 1
+      if (item.numberRemaining == 1)
         containerHTML += ''+item.name +' ('+item.weight+')'
       else
         containerHTML += ''+item.name +'['+item.numberRemaining+'] ('+item.weight+')'
