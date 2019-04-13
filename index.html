@@ -544,7 +544,7 @@ function generateTransactionLogs(){
   }
 
 
-  $('#lootLogSub').html('Total: '+(totalLoot-totalSpent)+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+  $('#lootLogSub').html('Current: '+(totalLoot-totalSpent)+', Total: '+totalLoot+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
 
   $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+', Net Loss: '+(totalSpent-totalSold))+'g';
   $('#transactionLog').html(transactionLog);
