@@ -557,15 +557,37 @@ function generateGearLogs(){
 }
 
 function input2JSON(){
-  let jsonFile = {errts: []};
+  let jsonFile = {errts: [], transactions: [], gear: []};
   $('#ER_Input tr').each(function(){
+    $this = $(this);
     jsonFile['errts'].push({
-      ERCode: $(this).find('.erCode').val(),
-      ERPoints: parseInt($(this).find('.points').val()),
-      BonusPoints: parseInt($(this).find('.bonusPoints').val()),
-      ItemAccess: $(this).find('.itemAccess').val()
+      ERCode: $this.find('.erCode').val(),
+      ERPoints: parseInt($this.find('.points').val()),
+      BonusPoints: parseInt($this.find('.bonusPoints').val()),
+      ItemAccess: $this.find('.itemAccess').val(),
+      IsBanked: $this.find('.isBanked').val()
     });
+  });
 
+  $('#Transaction_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['transactions'].push({
+      Name: $this.find('.transactionName').val(),
+      'Date': $this.find('.transactionDate').val(),
+      Cost: parseInt($this.find('.transactionCost').val()),
+      NumberPurchased: parseInt($this.find('.transactionNumberPurchased').val())
+    });
+  });
+
+  $('#Gear_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['gear'].push({
+      Name: $this.find('.gearName').val(),
+      Container: $this.find('.gearContainer').val(),
+      Weight: parseInt($this.find('.gearWeight').val()),
+      NumberRemaining: $this.find('.gearNumberRemaining').val(),
+      IsContainer: $this.find('.gearIsContainer').val()
+    });
   });
 
   let file = new Blob([JSON.stringify(jsonFile)], {type: "application/json"});
@@ -593,14 +615,40 @@ function JSON2Input(evt){
 
   reader.onload = function(progressEvent){
     let jsonFile = JSON.parse(this.result);
+
+    $('#ER_Input').html('');
+    $('#Transaction_Input').html('');
+    $('#Gear_Input').html('');
+
     for(errt of jsonFile['errts']){
-      let element = addERInput();
-      $(element).find('.erCode').val(errt['ERCode']);
-      $(element).find('.points').val(errt['ERPoints']);
-      $(element).find('.bonusPoints').val(errt['BonusPoints']);
-      $(element).find('.itemAccess').val(errt['ItemAccess']);
+      let $element = $(addERInput());
+
+      $element.find('.erCode').val(errt['ERCode']);
+      $element.find('.points').val(errt['ERPoints']);
+      $element.find('.bonusPoints').val(errt['BonusPoints']);
+      $element.find('.itemAccess').val(errt['ItemAccess']);
+      $element.find('.isBanked').val(errt['IsBanked']);
     }
-    
+
+    for(transaction of jsonFile['transactions']){
+      let $element = $(addTransactionInput());
+
+      $element.find('.transactionName').val(transaction['Name']);
+      $element.find('.transactionDate').val(transaction['Date']);
+      $element.find('.transactionCost').val(transaction['Cost']);
+      $element.find('.transactionNumberPurchased').val(transaction['NumberPurchased']);
+    }
+
+    for(gear of jsonFile['gear']){
+      let $element = $(addGearInput());
+
+      $element.find('.gearName').val(gear['Name']);
+      $element.find('.gearContainer').val(gear['Container']);
+      $element.find('.gearWeight').val(gear['Weight']);
+      $element.find('.gearNumberRemaining').val(gear['NumberRemaining']);
+      $element.find('.gearIsContainer').val(gear['IsContainer']);
+    }
+
      generateERLogs();
      generateTransactionLogs();
      generateGearLogs();
@@ -664,7 +712,7 @@ $('#Transaction_Input').on('blur', 'input', generateTransactionLogs);
 $('#Transaction_Input').on('keypress', 'input', function(event){
   let keycode = (event.keyCode ? event.keyCode : event.which);
   if(keycode == '13'){
-    $(addTransactionInput()).find('.erCode').focus();
+    $(addTransactionInput()).find('.transactionName').focus();
   }
 })
 
@@ -672,6 +720,22 @@ $('#Transaction_Input').on('click', '.transactionDelete', function(){
   if(confirm('Delete Transaction Log named: '+ $(this).closest('tr').find('.transactionName').val()+'?')){
     $(this).closest('tr').remove();
     generateTransactionLogs();
+  }
+});
+
+$('#Gear_Input').on('blur', 'input', generateGearLogs);
+
+$('#Gear_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addGearInput()).find('.gearName').focus();
+  }
+})
+
+$('#Gear_Input').on('click', '.gearDelete', function(){
+  if(confirm('Delete Gear Log named: '+ $(this).closest('tr').find('.gearName').val()+'?')){
+    $(this).closest('tr').remove();
+    generateGearLogs();
   }
 });
 
