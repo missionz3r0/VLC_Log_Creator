@@ -329,8 +329,8 @@ function addGearInput(){
       <td>
         <select class="gearContainer">
           <optgroup>
-            <option value="carried">Carried</option>
-            <option value="noncarried">Not Carried</option>
+            <option value="Carried">Carried</option>
+            <option value="Not Carried">Not Carried</option>
           </optgroup>
           <optgroup class="gearAvailableContainers" label="Containers">
           </optgroup>
@@ -551,8 +551,10 @@ function generateTransactionLogs(){
 }
 
 function generateGearLogs(){
+  let gearLog = '';
   let totalWeight = 0;
-  let containers = [];
+  let containers = ['Carried', 'Not Carried'];
+  let gear = {};
 
   $('#Gear_Input tr').each(function(){
     $this = $(this);
@@ -563,16 +565,37 @@ function generateGearLogs(){
     let isContainer = $this.find('.gearIsContainer').is(':checked');
 
     if(isContainer){
-
+      containers.push(name);
     }
 
-    transactions[date].push({
+    if(!(container in containers)){
+      gear[container] = [];
+    }
+
+    gear[container].push({
       "name": name,
-      "cost": cost,
-      "numberPurchased": numberPurchased
+      "container": container,
+      "weight": weight,
+      "numberRemaining": numberRemaining
     });
 
   });
+
+  for (container in containers){
+    let containerHTML = container.name+':';
+    for(item in gear[container]){
+      if item.numberRemaining == 1
+        containerHTML += ''+item.name +' ('+item.weight+')'
+      else
+        containerHTML += ''+item.name +'['+item.numberRemaining+'] ('+item.weight+')'
+      totalWeight += item.weight * item.numberRemaining;
+    }
+
+    gearLog += containerHTML + '<br><br>';
+  }
+
+  $('#gearLogSub').html('Weight: '+totalWeight);
+  $('#gearLog').html(gearLog);
 
 }
 
@@ -640,33 +663,39 @@ function JSON2Input(evt){
     $('#Transaction_Input').html('');
     $('#Gear_Input').html('');
 
-    for(errt of jsonFile['errts']){
-      let $element = $(addERInput());
+    if('errts' in jsonFile){
+      for(errt of jsonFile['errts']){
+        let $element = $(addERInput());
 
-      $element.find('.erCode').val(errt['ERCode']);
-      $element.find('.points').val(errt['ERPoints']);
-      $element.find('.bonusPoints').val(errt['BonusPoints']);
-      $element.find('.itemAccess').val(errt['ItemAccess']);
-      $element.find('.isBanked').val(errt['IsBanked']);
+        $element.find('.erCode').val(errt['ERCode']);
+        $element.find('.points').val(errt['ERPoints']);
+        $element.find('.bonusPoints').val(errt['BonusPoints']);
+        $element.find('.itemAccess').val(errt['ItemAccess']);
+        $element.find('.isBanked').val(errt['IsBanked']);
+      }
     }
 
-    for(transaction of jsonFile['transactions']){
-      let $element = $(addTransactionInput());
+    if('transactions' in jsonFile){
+      for(transaction of jsonFile['transactions']){
+        let $element = $(addTransactionInput());
 
-      $element.find('.transactionName').val(transaction['Name']);
-      $element.find('.transactionDate').val(transaction['Date']);
-      $element.find('.transactionCost').val(transaction['Cost']);
-      $element.find('.transactionNumberPurchased').val(transaction['NumberPurchased']);
+        $element.find('.transactionName').val(transaction['Name']);
+        $element.find('.transactionDate').val(transaction['Date']);
+        $element.find('.transactionCost').val(transaction['Cost']);
+        $element.find('.transactionNumberPurchased').val(transaction['NumberPurchased']);
+      }
     }
 
-    for(gear of jsonFile['gear']){
-      let $element = $(addGearInput());
+    if('gear' in jsonFile){
+      for(gear of jsonFile['gear']){
+        let $element = $(addGearInput());
 
-      $element.find('.gearName').val(gear['Name']);
-      $element.find('.gearContainer').val(gear['Container']);
-      $element.find('.gearWeight').val(gear['Weight']);
-      $element.find('.gearNumberRemaining').val(gear['NumberRemaining']);
-      $element.find('.gearIsContainer').val(gear['IsContainer']);
+        $element.find('.gearName').val(gear['Name']);
+        $element.find('.gearContainer').val(gear['Container']);
+        $element.find('.gearWeight').val(gear['Weight']);
+        $element.find('.gearNumberRemaining').val(gear['NumberRemaining']);
+        $element.find('.gearIsContainer').val(gear['IsContainer']);
+      }
     }
 
      generateERLogs();
