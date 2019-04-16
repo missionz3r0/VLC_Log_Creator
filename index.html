@@ -317,12 +317,8 @@ function addTransactionInput(){
   return newElement;
 }
 
-let gearID = 0;
-
 function addGearInput(){
-  gearID++;
   let newElement = document.createElement("tr");
-  newElement.id = "gear_"+gearID;
   newElement.innerHTML = `
       <td><span style="cursor: pointer;">&#9776;</span></td>
       <td><input type="text" class="gearName"></td>
@@ -528,25 +524,40 @@ function generateTransactionLogs(){
 
   for (dateString in transactions){
     let transactionDate = new Date(dateString);
-    transactionLog += (transactionDate.getMonth()+1)+'/'+(transactionDate.getDate()+1)+'/'+transactionDate.getFullYear()+' - ';
+    transactionLog += (transactionDate.getMonth()+1)+'/'+(transactionDate.getDate()+1)+'/'+transactionDate.getFullYear()+' - <ul style="list-style-type:none;">';
 
-    transactionLog += transactions[dateString].map(
-      function(transaction){
-        if(transaction.cost >= 0)
-          totalSpent += transaction.cost * transaction.numberPurchased;
-        else
-          totalSold -= transaction.cost *transaction.numberPurchased;
-        return transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost * transaction.numberPurchased+')';
+    let boughtItems = [];
+    let soldItems = [];
+
+    for (transaction of transactions[dateString]){
+      let text = ''
+      if (transaction.numberPurchased > 1)
+        text += transaction.name+'['+transaction.numberPurchased+'] ('+transaction.cost * transaction.numberPurchased+')';
+      else
+        text += transaction.name+' ('+transaction.cost * transaction.numberPurchased+')';
+      if(transaction.cost >= 0){
+        totalSpent += transaction.cost * transaction.numberPurchased;
+        boughtItems.push(text);
       }
-    ).join(', ');
+      else{
+        totalSold -= transaction.cost *transaction.numberPurchased;
+        soldItems.push(text);
+      }
+    }
 
-    transactionLog += '<br>'
+    if(boughtItems.length > 0)
+      transactionLog += '<li>Bought: ' + boughtItems.join(', ')+'</li>';
+
+    if(soldItems.length > 0)
+      transactionLog += '<li>Sold: ' + soldItems.join(', ')+'</li>';
+
+    transactionLog += '</ul><br>'
   }
 
 
-  $('#lootLogSub').html('Current: '+(totalLoot-totalSpent)+', Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+  $('#lootLogSub').html('Current: '+(totalLoot-(totalSpent-totalSold))+'gp, Total: '+totalLoot+', BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
 
-  $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+', Net Loss: '+(totalSpent-totalSold))+'g';
+  $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+'g, Net Loss: '+(totalSpent-totalSold))+'g';
   $('#transactionLog').html(transactionLog);
 }
 
@@ -559,7 +570,7 @@ function generateGearLogs(){
   $('#Gear_Input tr').each(function(){
     $this = $(this);
     let name = $this.find('.gearName').val();
-    let container = $this.find('.gearContainer').val();
+    let container = $this.find('.gearContainer').val() || 'Carried';
     let weight = parseFloat($this.find('.gearWeight').val()) || 0;
     let numberRemaining = parseInt($this.find('.gearNumberRemaining').val()) || 0
     let isContainer = $this.find('.gearIsContainer').is(':checked');
@@ -568,30 +579,34 @@ function generateGearLogs(){
       containers.push(name);
     }
 
-    if(!(container in containers)){
+    if(!(container in gear)){
       gear[container] = [];
     }
 
     gear[container].push({
       "name": name,
-      "container": container,
       "weight": weight,
       "numberRemaining": numberRemaining
     });
 
   });
 
-  for (container in containers){
-    let containerHTML = container.name+':';
-    for(item in gear[container]){
-      if (item.numberRemaining == 1)
-        containerHTML += ''+item.name +' ('+item.weight+')'
-      else
-        containerHTML += ''+item.name +'['+item.numberRemaining+'] ('+item.weight+')'
-      totalWeight += item.weight * item.numberRemaining;
-    }
+  for (container of containers){
+    if(container in gear){
+      let containerHTML = container+':<br><ul style="list-style-type:none;">';
 
-    gearLog += containerHTML + '<br><br>';
+      for(item of gear[container]){
+        containerHTML += '<li>'
+        if (item.numberRemaining == 1)
+          containerHTML += item.name +' ('+item.weight+')';
+        else
+          containerHTML += item.name +'['+item.numberRemaining+'] ('+item.weight+')';
+        containerHTML += '</li>';
+        totalWeight += item.weight * item.numberRemaining;
+      }
+
+      gearLog += containerHTML + '</ul><br><br>';
+    }
   }
 
   $('#gearLogSub').html('Weight: '+totalWeight);
@@ -617,7 +632,7 @@ function input2JSON(){
     jsonFile['transactions'].push({
       Name: $this.find('.transactionName').val(),
       'Date': $this.find('.transactionDate').val(),
-      Cost: parseInt($this.find('.transactionCost').val()),
+      Cost: parseFloat($this.find('.transactionCost').val()),
       NumberPurchased: parseInt($this.find('.transactionNumberPurchased').val())
     });
   });
@@ -627,8 +642,8 @@ function input2JSON(){
     jsonFile['gear'].push({
       Name: $this.find('.gearName').val(),
       Container: $this.find('.gearContainer').val(),
-      Weight: parseInt($this.find('.gearWeight').val()),
-      NumberRemaining: $this.find('.gearNumberRemaining').val(),
+      Weight: parseFloat($this.find('.gearWeight').val()),
+      NumberRemaining: parseInt($this.find('.gearNumberRemaining').val()),
       IsContainer: $this.find('.gearIsContainer').is(':checked')
     });
   });
@@ -687,14 +702,26 @@ function JSON2Input(evt){
     }
 
     if('gear' in jsonFile){
+      let delayedContainers = [];
+
       for(gear of jsonFile['gear']){
         let $element = $(addGearInput());
 
         $element.find('.gearName').val(gear['Name']);
-        $element.find('.gearContainer').val(gear['Container']);
+        if($element.find("option[value='"+gear['Container']+"']").length > 0){
+          $element.find('.gearContainer').val(gear['Container']);
+        }
+        else{
+          delayedContainers.push({containerSelect: $element.find('.gearContainer'), container:gear['Container']});
+        }
         $element.find('.gearWeight').val(gear['Weight']);
         $element.find('.gearNumberRemaining').val(gear['NumberRemaining']);
-        $element.find('.gearIsContainer').val(gear['IsContainer']);
+        $element.find('.gearIsContainer').prop('checked', gear['IsContainer']);
+      }
+
+      for (delayedContainer of delayedContainers){
+        fillGearSelect(delayedContainer.containerSelect);
+        delayedContainer.containerSelect.val(delayedContainer['container']);
       }
     }
 
@@ -772,7 +799,7 @@ $('#Transaction_Input').on('click', '.transactionDelete', function(){
   }
 });
 
-$('#Gear_Input').on('blur', 'input', generateGearLogs);
+$('#Gear_Input').on('blur', 'input,select', generateGearLogs);
 
 $('#Gear_Input').on('keypress', 'input', function(event){
   let keycode = (event.keyCode ? event.keyCode : event.which);
@@ -788,10 +815,31 @@ $('#Gear_Input').on('click', '.gearDelete', function(){
   }
 });
 
+function fillGearSelect($element){
+  let html = '';
+
+  let originName = $element.closest('tr').find('.gearName').val();
+
+  let $containers = $element.find('.gearAvailableContainers')
+
+  $containers.html('');
+  $(gearInput).find('tr').each(function(){
+    let $this = $(this);
+    let name = $this.find('.gearName').val();
+
+    if($this.find('.gearIsContainer').is(':checked') && name != originName){
+      html+= '<option value="'+name+'">'+name+'</option>';
+    }
+  });
+
+  $containers.html(html);
+
+}
+
 $('#Gear_Input').on('focus', '.gearContainer', function(){
   let html = '';
 
-  let id = $(this).closest('tr').prop('id');
+  let originName = $(this).closest('tr').find('.gearName').val();
 
   let $containers = $(this).find('.gearAvailableContainers')
 
@@ -800,8 +848,8 @@ $('#Gear_Input').on('focus', '.gearContainer', function(){
     let $this = $(this);
     let name = $this.find('.gearName').val();
 
-    if($this.find('.gearIsContainer').is(':checked') && id != $this.prop('id')){
-      html+= '<option value="'+$(this).prop('id')+'">'+name+'</option>';
+    if($this.find('.gearIsContainer').is(':checked') && name != originName){
+      html+= '<option value="'+name+'">'+name+'</option>';
     }
   });
 
