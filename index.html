@@ -507,6 +507,7 @@ function generateTransactionLogs(){
   $('#Transaction_Input tr').each(function(){
     let name = $(this).find('.transactionName').val();
     let date = $(this).find('.transactionDate').val();
+    date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 );
     let cost = parseFloat($(this).find('.transactionCost').val()) || 0;
     let numberPurchased = parseInt($(this).find('.transactionNumberPurchased').val()) || 0
 
