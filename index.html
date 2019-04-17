@@ -552,7 +552,7 @@ function generateTransactionLogs(){
     if(soldItems.length > 0)
       transactionLog += '<li>Sold: ' + soldItems.join(', ')+'</li>';
 
-    transactionLog += '</ul><br>'
+    transactionLog += '</ul>'
   }
 
 
@@ -606,7 +606,7 @@ function generateGearLogs(){
         totalWeight += item.weight * item.numberRemaining;
       }
 
-      gearLog += containerHTML + '</ul><br><br>';
+      gearLog += containerHTML + '</ul>';
     }
   }
 
