@@ -507,7 +507,6 @@ function generateTransactionLogs(){
   $('#Transaction_Input tr').each(function(){
     let name = $(this).find('.transactionName').val();
     let date = $(this).find('.transactionDate').val();
-    date.setTime( date.getTime() + date.getTimezoneOffset()*60*1000 );
     let cost = parseFloat($(this).find('.transactionCost').val()) || 0;
     let numberPurchased = parseInt($(this).find('.transactionNumberPurchased').val()) || 0
 
@@ -525,6 +524,7 @@ function generateTransactionLogs(){
 
   for (dateString in transactions){
     let transactionDate = new Date(dateString);
+    transactionDate.setTime( transactionDate.getTime() + transactionDate.getTimezoneOffset()*60*1000 );
     transactionLog += (transactionDate.getMonth()+1)+'/'+(transactionDate.getDate())+'/'+transactionDate.getFullYear()+' - <ul style="list-style-type:none;">';
 
     let boughtItems = [];
