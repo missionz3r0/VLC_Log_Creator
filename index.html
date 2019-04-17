@@ -524,7 +524,7 @@ function generateTransactionLogs(){
 
   for (dateString in transactions){
     let transactionDate = new Date(dateString);
-    transactionLog += (transactionDate.getMonth()+1)+'/'+(transactionDate.getDate()+1)+'/'+transactionDate.getFullYear()+' - <ul style="list-style-type:none;">';
+    transactionLog += (transactionDate.getMonth()+1)+'/'+(transactionDate.getDate())+'/'+transactionDate.getFullYear()+' - <ul style="list-style-type:none;">';
 
     let boughtItems = [];
     let soldItems = [];
