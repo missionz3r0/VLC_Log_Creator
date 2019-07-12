@@ -308,7 +308,7 @@ function addTransactionInput(){
       <td><span style="cursor: pointer;">&#9776;</span></td>
       <td><input type="text" class="transactionName"></td>
       <td><input type="date" class="transactionDate" value="`+(new Date().toJSON().slice(0, 10))+`"></td>
-      <td><input type="number" class="transactionCost"></td>
+      <td><input type="number" class="transactionCost" step="0.01"></td>
       <td><input type="number" class="transactionNumberPurchased" value="1"></td>
       <td><span class="transactionDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
   `;
@@ -332,7 +332,7 @@ function addGearInput(){
           </optgroup>
         </select>
       </td>
-      <td><input type="number" class="gearWeight"></td>
+      <td><input type="number" class="gearWeight" step="0.01"></td>
       <td><input type="number" class="gearNumberRemaining" value="1"></td>
       <td><input type="checkbox" class="gearIsContainer"></td>
       <td><span class="gearDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
