@@ -556,9 +556,9 @@ function generateTransactionLogs(){
   }
 
 
-  $('#lootLogSub').html('Current: '+(float(totalLoot).toPrecision(3)-(float(totalSpent).toPrecision(3)-float(totalSold).toPrecision(3)))+'g, Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+  $('#lootLogSub').html('Current: '+(parseFloat(totalLoot).toPrecision(3)-(parseFloat(totalSpent).toPrecision(3)-parseFloat(totalSold).toPrecision(3)))+'g, Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
 
-  $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+'g, Net Loss: '+(float(totalSpent).toPrecision(3)-float(totalSold).toPrecision(3))+'g');
+  $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+'g, Net Loss: '+(parseFloat(totalSpent).toPrecision(3)-parseFloat(totalSold).toPrecision(3))+'g');
   $('#transactionLog').html(transactionLog);
 }
 
