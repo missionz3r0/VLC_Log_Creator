@@ -491,7 +491,6 @@ function generateERLogs(){
   $('#expLogSub').html('EXP: '+totalExp);
   $('#currentLevel').html(exp2lvl(totalExp));
   $('#lootLog').html(lootLog);
-  $('#lootLogSub').html('Total: '+(totalLoot-(totalSpent-totalSold))+'g BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
   $('#downtimeLog').html(downtimeLog);
   $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total: '+totalDowntime+' Days Earned: '+(((totalDowntime-(totalDowntime%3))/3)*7));
   $('#itemAccessLog').html(accessLog);
@@ -560,7 +559,7 @@ function generateTransactionLogs(){
   }
 
 
-  $('#lootLogSub').html('Current: '+(parseFloat(totalLoot).toPrecision(15)-roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold)))+'g, Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
+  $('#lootLogSub').html('Current: '+roundToTwo(roundToTwo(totalLoot)-roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold)))+'g, Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
 
   $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+'g, Net Loss: '+roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold))+'g');
   $('#transactionLog').html(transactionLog);
