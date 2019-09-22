@@ -820,8 +820,8 @@ function JSON2Input(evt){
       }
     }
 
-    if('downtimes' in jsonFile){
-      for(downtime of jsonFile['downtimes']){
+    if('downtime' in jsonFile){
+      for(downtime of jsonFile['downtime']){
         let $element = $(addDowntimeInput());
 
         $element.find('.downtimeNumDays').val(downtime['NumDays']);
