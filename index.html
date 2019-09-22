@@ -26,7 +26,7 @@
         <a class="nav-link" id="encounterReports-tab" data-toggle="tab" href="#encounterReports" role="tab" aria-controls="encounterReports" aria-selected="false">Encounter Reports</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" id="downtime-tab" data-toggle="tab" href="#downtime" role="tab" aria-controls="downtime" aria-selected="false">Downtime</a>
+        <a class="nav-link" id="downtime-tab" data-toggle="tab" href="#downtime" role="tab" aria-controls="downtime" aria-selected="false">Retraining</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
@@ -185,6 +185,7 @@
           <thead class="thead-dark">
             <tr>
               <th></th>
+              <th>Date Used</th>
               <th>Number of days</th>
               <th>Days Spent on</th>
               <th>Delete</th>
@@ -370,6 +371,7 @@ function addDowntimeInput(){
   let newElement = document.createElement("tr");
   newElement.innerHTML = `
       <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="date" class="downtimeDate" value="`+(new Date().toJSON().slice(0, 10))+`"></td>
       <td><input type="number" class="downtimeNumDays"></td>
       <td><input type="text" class="downtimeDescription"></td>
       <td><span class="downtimeDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
@@ -408,7 +410,8 @@ var totalLootPoints = 0;
 var totalBonusPoints = 0;
 var currentBonusPoints = 0;
 var totalDowntime = 3
-var totalDowntimeSpent = 0;
+var totalDowntimeDays = 0;
+var totalDowntimeDaysSpent = 0;
 var totalSpent = 0;
 var totalSold = 0;
 
@@ -521,12 +524,14 @@ function generateERLogs(){
     accessLog += erCode+' - '+itemAccess+'<br>';
   }
 
+  totalDowntimeDays = (((totalDowntime-(totalDowntime%3))/3)*7);
+
   $('#expLog').html(expLog);
   $('#expLogSub').html('EXP: '+totalExp);
   $('#currentLevel').html(exp2lvl(totalExp));
   $('#lootLog').html(lootLog);
   $('#downtimeLog').html(downtimeLog);
-  $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3 Total: '+totalDowntime+' Days Earned: '+(((totalDowntime-(totalDowntime%3))/3)*7));
+  $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3, Total: '+totalDowntime+', Days Earned: '+totalDowntimeDays);
   $('#itemAccessLog').html(accessLog);
   $('#bankingLog').html(bankedLogs);
 
@@ -655,20 +660,43 @@ function generateGearLogs(){
 
 function generateRetrainingLogs(){
   let downtimeLog = '';
-  let downtimeSpent = 0;
+  let downtimeDaysSpent = 0;
+
+  let downtimeByDate = {};
 
   $('#Downtime_Input tr').each(function(){
     $this = $(this);
     let numDays = parseInt($this.find('.downtimeNumDays').val()) || 0;
     let desc = $this.find('.downtimeDescription').val();
+    let date = $(this).find('.downtimeDate').val();
 
-    downtimeSpent += numDays;
-    downtimeLog += 'Spent '+numDays+' days on '+desc+'<br>'
+    if(!(date in downtimeByDate)){
+      downtimeByDate[date] = [];
+    }
+
+    downtimeByDate[date].push({
+      "numDays": numDays,
+      "desc": desc,
+    });
+
   });
 
-  totalDowntimeSpent = downtimeSpent;
+  for (dateString in downtimeByDate){
+    let downtimeDate = new Date(dateString);
+    downtimeDate.setTime( downtimeDate.getTime() + downtimeDate.getTimezoneOffset()*60*1000 );
+    downtimeLog += (downtimeDate.getMonth()+1)+'/'+(downtimeDate.getDate())+'/'+downtimeDate.getFullYear()+' - <ul style="list-style-type:none;">';
 
-  $('#retrainingLogSub').html('Days Spent: '+totalDowntimeSpent+', Days Remaining: '+(totalDowntime-totalDowntimeSpent));
+    for (downtime of downtimeByDate[dateString]){
+      downtimeDaysSpent += downtime.numDays;
+      downtimeLog += '<li>Spent '+downtime.numDays+' days on '+downtime.desc+'</li>'
+    }
+
+    downtimeLog += '</ul>';
+  }
+
+  totalDowntimeDaysSpent = downtimeDaysSpent;
+
+  $('#retrainingLogSub').html('Days Spent: '+totalDowntimeDaysSpent+', Days Remaining: '+(totalDowntimeDays-totalDowntimeDaysSpent));
   $('#retrainingLog').html(downtimeLog);
 }
 
@@ -710,6 +738,7 @@ function input2JSON(){
     $this = $(this);
     jsonFile['downtime'].push({
       NumDays: $this.find('.owntimeNumDays').val(),
+      'Date': $this.find('.downtimeDate').val(),
       Description: $this.find('.downtimeDescription').val(),
     });
   });
@@ -797,6 +826,7 @@ function JSON2Input(evt){
 
         $element.find('.downtimeNumDays').val(downtime['NumDays']);
         $element.find('.downtimeDescription').val(downtime['Description']);
+        $element.find('.downtimeDate').val(downtime['Date']);
       }
     }
 
