@@ -26,6 +26,9 @@
         <a class="nav-link" id="encounterReports-tab" data-toggle="tab" href="#encounterReports" role="tab" aria-controls="encounterReports" aria-selected="false">Encounter Reports</a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" id="downtime-tab" data-toggle="tab" href="#downtime" role="tab" aria-controls="downtime" aria-selected="false">Downtime</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" id="transactions-tab" data-toggle="tab" href="#transactions" role="tab" aria-controls="transactions" aria-selected="false">Transactions</a>
       </li>
       <li class="nav-item">
@@ -177,6 +180,21 @@
         </table>
         <button type="button" onClick="addGearInput();">Add Gear</button>
       </div>
+      <div class="tab-pane fade" id="downtime" role="tabpanel" aria-labelledby="downtime-tab">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th></th>
+              <th>Number of days</th>
+              <th>Days Spent on</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody id="Downtime_Input">
+          </tbody>
+        </table>
+        <button type="button" onClick="addDowntimeInput();">Add Downtime</button>
+      </div>
     </div>
 
   </body>
@@ -201,10 +219,12 @@ $('#ER_Input').sortable({
 
 $('#Transaction_Input').sortable();
 $('#Gear_Input').sortable();
+$('#Downtime_Input').sortable();
 
 const erInput = document.getElementById('ER_Input');
 const transactionInput = document.getElementById('Transaction_Input');
 const gearInput = document.getElementById('Gear_Input');
+const downtimeInput = document.getElementById('Downtime_Input');
 const lvl2loot = {
   1:  286,
   2:  321,
@@ -346,6 +366,19 @@ function addGearInput(){
   return newElement;
 }
 
+function addDowntimeInput(){
+  let newElement = document.createElement("tr");
+  newElement.innerHTML = `
+      <td><span style="cursor: pointer;">&#9776;</span></td>
+      <td><input type="number" class="downtimeNumDays"></td>
+      <td><input type="text" class="downtimeDescription"></td>
+      <td><span class="downtimeDelete" style="cursor: pointer; color: red;">&#10008;</span></td>
+  `;
+
+  downtimeInput.appendChild(newElement);
+  return newElement;
+}
+
 function addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports){
   if(bankedReportsNeedingApplied.length > 0){
     for(let i = bankedReportsNeedingApplied.length-1;i >= 0;i--){
@@ -375,6 +408,7 @@ var totalLootPoints = 0;
 var totalBonusPoints = 0;
 var currentBonusPoints = 0;
 var totalDowntime = 3
+var totalDowntimeSpent = 0;
 var totalSpent = 0;
 var totalSold = 0;
 
@@ -497,6 +531,7 @@ function generateERLogs(){
   $('#bankingLog').html(bankedLogs);
 
   generateTransactionLogs();
+  generateRetrainingLogs();
 }
 
 function generateTransactionLogs(){
@@ -618,8 +653,27 @@ function generateGearLogs(){
 
 }
 
+function generateRetrainingLogs(){
+  let downtimeLog = '';
+  let downtimeSpent = 0;
+
+  $('#Downtime_Input tr').each(function(){
+    $this = $(this);
+    let numDays = parseInt($this.find('.downtimeNumDays').val()) || 0;
+    let desc = $this.find('.downtimeDescription').val();
+
+    downtimeSpent += numDays;
+    downtimeLog += 'Spent '+numDays+' days on '+desc+'<br>'
+  });
+
+  totalDowntimeSpent = downtimeSpent;
+
+  $('#retrainingLogSub').html('Days Spent: '+totalDowntimeSpent+', Days Remaining: '+(totalDowntime-totalDowntimeSpent));
+  $('#retrainingLog').html(downtimeLog);
+}
+
 function input2JSON(){
-  let jsonFile = {errts: [], transactions: [], gear: []};
+  let jsonFile = {errts: [], transactions: [], gear: [], downtime: []};
   $('#ER_Input tr').each(function(){
     $this = $(this);
     jsonFile['errts'].push({
@@ -652,13 +706,21 @@ function input2JSON(){
     });
   });
 
+  $('#Downtime_Input tr').each(function(){
+    $this = $(this);
+    jsonFile['downtime'].push({
+      NumDays: $this.find('.owntimeNumDays').val(),
+      Description: $this.find('.downtimeDescription').val(),
+    });
+  });
+
   let file = new Blob([JSON.stringify(jsonFile)], {type: "application/json"});
   let filename  = prompt("File Name:")+'.json';
   if (window.navigator.msSaveOrOpenBlob) // IE10+
       window.navigator.msSaveOrOpenBlob(file, filename);
   else { // Others
       var a = document.createElement("a"),
-              url = URL.createObjectURL(file);
+      url = URL.createObjectURL(file);
       a.href = url;
       a.download = filename;
       document.body.appendChild(a);
@@ -729,9 +791,19 @@ function JSON2Input(evt){
       }
     }
 
+    if('downtimes' in jsonFile){
+      for(downtime of jsonFile['downtimes']){
+        let $element = $(addDowntimeInput());
+
+        $element.find('.downtimeNumDays').val(downtime['NumDays']);
+        $element.find('.downtimeDescription').val(downtime['Description']);
+      }
+    }
+
      generateERLogs();
      generateTransactionLogs();
      generateGearLogs();
+     generateRetrainingLogs();
   }
 
   reader.readAsText(file);
@@ -742,6 +814,7 @@ $('#fileImport').change(JSON2Input);
 addERInput();
 addTransactionInput();
 addGearInput();
+addDowntimeInput();
 
 $('#ER_Input').on('blur', 'input', generateERLogs);
 $('#ER_Input').on('focus', '.applyAfter', function(){
@@ -859,5 +932,21 @@ $('#Gear_Input').on('focus', '.gearContainer', function(){
 
   $containers.html(html);
 
+});
+
+$('#Downtime_Input').on('blur', 'input', generateRetrainingLogs);
+
+$('#Downtime_Input').on('keypress', 'input', function(event){
+  let keycode = (event.keyCode ? event.keyCode : event.which);
+  if(keycode == '13'){
+    $(addTransactionInput()).find('.transactionName').focus();
+  }
+})
+
+$('#Downtime_Input').on('click', '.downtimeDelete', function(){
+  if(confirm('Delete Downtime Log?')){
+    $(this).closest('tr').remove();
+    generateRetrainingLogs();
+  }
 });
 </script>
