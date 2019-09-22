@@ -737,7 +737,7 @@ function input2JSON(){
   $('#Downtime_Input tr').each(function(){
     $this = $(this);
     jsonFile['downtime'].push({
-      NumDays: $this.find('.owntimeNumDays').val(),
+      NumDays: $this.find('.downtimeNumDays').val(),
       'Date': $this.find('.downtimeDate').val(),
       Description: $this.find('.downtimeDescription').val(),
     });
