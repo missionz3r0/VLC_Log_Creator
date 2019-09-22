@@ -283,8 +283,8 @@ function exp2lvl(experience){
       return key;
   }
 }
-	
-function roundToTwo(num) {    
+
+function roundToTwo(num) {
   return +(Math.round(num + "e+2")  + "e-2");
 }
 
@@ -690,7 +690,7 @@ function JSON2Input(evt){
         $element.find('.points').val(errt['ERPoints']);
         $element.find('.bonusPoints').val(errt['BonusPoints']);
         $element.find('.itemAccess').val(errt['ItemAccess']);
-        $element.find('.isBanked').val(errt['IsBanked']);
+        $element.find('.isBanked').prop( "checked", errt['IsBanked'] );
       }
     }
 
