@@ -136,7 +136,7 @@
               <th>Bonus Points</th>
               <th>Item Access</th>
               <th>Banked?</th>
-              <!--<th>Apply After</th>-->
+              <th>Apply After</th>
               <th>Delete</th>
             </tr>
           </thead>
@@ -318,10 +318,9 @@ function addERInput(){
       <td><input type="number" class="bonusPoints"></td>
       <td><input type="text" class="itemAccess"></td>
       <td><input type="checkbox" class="isBanked"></td>
+      <td><select class="applyAfter" disabled></select></td>
       <td><span class="deleteER" style="cursor: pointer; color: red;">&#10008;</span></td>
   `;
-
-  //<td><select class="applyAfter" disabled></select></td>
 
   erInput.appendChild(newElement);
   return newElement;
@@ -449,8 +448,11 @@ function generateERLogs(){
       points: parseInt($(this).find('.points').val()) || 0,
       bonusPoints: parseInt($(this).find('.bonusPoints').val()) || 0,
       itemAccess: $(this).find('.itemAccess').val(),
-      applyAfter: applyAfter
+      applyAfter: applyAfter,
+      levelEarned: parseInt(exp2lvl(totalExp))
     }
+
+    totalExp += expPoints;
 
     if(!isBanked){
       reportOrder.push(erCode);
@@ -466,6 +468,8 @@ function generateERLogs(){
 
   reportOrder = addBankedReportsToReportOrder(reportOrder, bankedReportsNeedingApplied, reports);
 
+  let appliedExp = 0;
+
   for(report of reportOrder){
     let erCode = report;
     let expPoints = reports[report]['points'];
@@ -473,18 +477,19 @@ function generateERLogs(){
     let lootPoints = expPoints;
     let bonusPoints = reports[report]['bonusPoints'];
     let itemAccess = reports[report]['itemAccess'];
+    let levelEarned = reports[report]['levelEarned'];
 
     downtimeLog += downtimePoints+' DP - '+erCode+'<br>';
     totalDowntime += downtimePoints;
 
-    let currentLvl = parseInt(exp2lvl(totalExp));
+    let currentLvl = parseInt(exp2lvl(appliedExp));
 
     if(expPoints > 0){
       let lootPointsApplied = 0;
       let loot = 0;
       let lootPointsString = '';
       let lootGoldString = '';
-      for(let i=currentLvl;i<=parseInt(exp2lvl(totalExp+expPoints));i++){
+      for(let i = currentLvl; i<= parseInt(exp2lvl(appliedExp+expPoints)); i++){
         let lootPointsToApply = 0;
         if((totalLootPoints+lootPoints-lootPointsApplied)>(expObjects[i]['max']+1))
           lootPointsToApply = expObjects[i]['max']+1-totalLootPoints;
@@ -512,11 +517,11 @@ function generateERLogs(){
       if(currentBonusPoints >= 5){
         let numConvertedLootPoints = (currentBonusPoints-(currentBonusPoints%5))/5;
         currentBonusPoints -= numConvertedLootPoints*5;
-        lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+currentLvl+') = ' + (numConvertedLootPoints*lvl2loot[currentLvl])+'<br>';
-        totalLoot += numConvertedLootPoints*lvl2loot[currentLvl];
+        lootLog += 'Converting ' + (numConvertedLootPoints*5) + ' BP into '+numConvertedLootPoints+' LP (Level '+levelEarned+') = ' + (numConvertedLootPoints*lvl2loot[levelEarned])+'<br>';
+        totalLoot += numConvertedLootPoints*lvl2loot[levelEarned];
       }
 
-      totalExp += expPoints;
+      appliedExp += expPoints;
 
       expLog += expPoints+' XP - '+erCode+'<br>';
     }
@@ -638,6 +643,16 @@ function generateGearLogs(){
   for (container of containers){
     if(container in gear){
       let containerHTML = container+':<br><ul style="list-style-type:none;">';
+
+      gear[container].sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        } else if (a.name > b.name) {
+          return 1;
+        } else {
+          return 0;
+        }
+      })
 
       for(item of gear[container]){
         containerHTML += '<li>'
