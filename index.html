@@ -606,7 +606,7 @@ function generateTransactionLogs(){
 
   $('#lootLogSub').html('Current: '+roundToTwo(roundToTwo(totalLoot)-roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold)))+'g, Total: '+totalLoot+'g, BP: '+currentBonusPoints+' (Total '+totalBonusPoints+')');
 
-  $('#transactionLogSub').html('Spent: '+totalSpent+'g, Sold: '+totalSold+'g, Net Loss: '+roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold))+'g');
+  $('#transactionLogSub').html('Spent: '+roundToTwo(totalSpent)+'g, Sold: '+roundToTwo(totalSold)+'g, Net Loss: '+roundToTwo(roundToTwo(totalSpent)-roundToTwo(totalSold))+'g');
   $('#transactionLog').html(transactionLog);
 }
 
