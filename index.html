@@ -661,7 +661,9 @@ function generateGearLogs(){
         else
           containerHTML += item.name +'['+item.numberRemaining+'] ('+item.weight+')';
         containerHTML += '</li>';
-        totalWeight += item.weight * item.numberRemaining;
+	if (container !== 'Not Carried') {
+          totalWeight += item.weight * item.numberRemaining;
+	}
       }
 
       gearLog += containerHTML + '</ul>';
