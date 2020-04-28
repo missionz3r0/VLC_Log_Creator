@@ -452,8 +452,6 @@ function generateERLogs(){
       levelEarned: parseInt(exp2lvl(totalExp))
     }
 
-    totalExp += expPoints;
-
     if(!isBanked){
       reportOrder.push(erCode);
     }
@@ -483,6 +481,8 @@ function generateERLogs(){
     totalDowntime += downtimePoints;
 
     let currentLvl = parseInt(exp2lvl(appliedExp));
+
+    totalExp += expPoints;
 
     if(expPoints > 0){
       let lootPointsApplied = 0;
