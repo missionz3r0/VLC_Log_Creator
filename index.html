@@ -453,6 +453,7 @@ function generateERLogs(){
     }
 
     if(!isBanked){
+      totalExp += expPoints;
       reportOrder.push(erCode);
     }
     else if(applyAfter.length > 0){
@@ -481,8 +482,6 @@ function generateERLogs(){
     totalDowntime += downtimePoints;
 
     let currentLvl = parseInt(exp2lvl(appliedExp));
-
-    totalExp += expPoints;
 
     if(expPoints > 0){
       let lootPointsApplied = 0;
@@ -532,8 +531,8 @@ function generateERLogs(){
   totalDowntimeDays = (((totalDowntime-(totalDowntime%3))/3)*7);
 
   $('#expLog').html(expLog);
-  $('#expLogSub').html('EXP: '+totalExp);
-  $('#currentLevel').html(exp2lvl(totalExp));
+  $('#expLogSub').html('EXP: '+appliedExp);
+  $('#currentLevel').html(exp2lvl(appliedExp));
   $('#lootLog').html(lootLog);
   $('#downtimeLog').html(downtimeLog);
   $('#downtimeLogSub').html('C:'+(totalDowntime%3)+'/3, Total: '+totalDowntime+', Days Earned: '+totalDowntimeDays);
