@@ -437,7 +437,7 @@ function generateERLogs(){
   let bankedLogs = '';
 
   $('#ER_Input tr').each(function(){
-    let erCode = $(this).find('.erCode').val();
+    let erCode = $(this).find('.erCode').val().replace(/"/g, "'");
     let expPoints = parseInt($(this).find('.points').val()) || 0;
     let bonusPoints = parseInt($(this).find('.bonusPoints').val()) || 0;
     let itemAccess = $(this).find('.itemAccess').val();
@@ -725,7 +725,8 @@ function input2JSON(){
       ERPoints: parseInt($this.find('.points').val()),
       BonusPoints: parseInt($this.find('.bonusPoints').val()),
       ItemAccess: $this.find('.itemAccess').val(),
-      IsBanked: $this.find('.isBanked').is(':checked')
+      IsBanked: $this.find('.isBanked').is(':checked'),
+      ApplyAfter: $this.find('.applyAfter').val()
     });
   });
 
@@ -791,7 +792,9 @@ function JSON2Input(evt){
     $('#Downtime_Input').html('');
 
     if('errts' in jsonFile){
-      for(errt of jsonFile['errts']){
+      let applyAfters = []
+
+      for(errt of jsonFile['errts']) {
         let $element = $(addERInput());
 
         $element.find('.erCode').val(errt['ERCode']);
@@ -799,6 +802,18 @@ function JSON2Input(evt){
         $element.find('.bonusPoints').val(errt['BonusPoints']);
         $element.find('.itemAccess').val(errt['ItemAccess']);
         $element.find('.isBanked').prop( "checked", errt['IsBanked'] );
+        if(errt['IsBanked']) {
+          applyAfters.push({
+            $element: $element,
+            applyAfter: errt['ApplyAfter'] || 'None'
+          })
+        }
+      }
+
+      for (let applyAfterObject of applyAfters) {
+        applyAfterObject.$element.find('.applyAfter').prop('disabled', false);
+        generateApplyAfter(applyAfterObject.$element.find('.applyAfter'))
+        applyAfterObject.$element.find('.applyAfter').val(applyAfterObject.applyAfter);
       }
     }
 
@@ -863,31 +878,33 @@ addTransactionInput();
 addGearInput();
 addDowntimeInput();
 
-$('#ER_Input').on('blur', 'input', generateERLogs);
-$('#ER_Input').on('focus', '.applyAfter', function(){
+function generateApplyAfter($applyAfter) {
+  $applyAfter.prop('disabled', false);
+
   let html = '<option value="None">None</option>';
-  let $applyAfter = $(this);
-  let originalValue = $applyAfter.parent().parent().find('.erCode').val()
+  let originalValue = $applyAfter.parent().parent().find('.erCode').val().replace(/"/g, "'")
 
   $applyAfter.html('');
   $('.erCode').each(function(){
-    let val = $(this).val();
+    let val = $(this).val().replace(/"/g, "'");
 
     if(val != originalValue)
-      html+= '<option value="'+val+'">'+val+'</option>';
+      html += '<option value="'+val+'">'+val+'</option>';
   });
 
   $applyAfter.html(html);
+}
 
-});
+$('#ER_Input').on('blur', 'input', generateERLogs);
 $('#ER_Input').on('change', '.isBanked', function(){
   let $parent = $(this).parent().parent();
   if($(this).is(':checked')){
-    $parent.find('.applyAfter').prop('disabled', false);
+    let $applyAfter = $parent.find('.applyAfter');
+    generateApplyAfter($applyAfter)
   }
   else{
     $parent.find('.applyAfter').prop('disabled', true);
-    $parent.find('.applyAfter').val('');
+    $parent.find('.applyAfter').val('None');
   }
   generateERLogs();
 });
