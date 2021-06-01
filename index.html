@@ -835,8 +835,8 @@ function JSON2Input(evt){
         let $element = $(addGearInput());
 
         $element.find('.gearName').val(gear['Name']);
-        if($element.find("option[value='"+gear['Container']+"']").length > 0){
-          $element.find('.gearContainer').val(gear['Container']);
+        if($element.find("option[value='"+gear['Container'].replaceAll('\'','')+"']").length > 0){
+          $element.find('.gearContainer').val(gear['Container'].replaceAll('\'',''));
         }
         else{
           delayedContainers.push({containerSelect: $element.find('.gearContainer'), container:gear['Container']});
@@ -969,7 +969,7 @@ function fillGearSelect($element){
     let name = $this.find('.gearName').val();
 
     if($this.find('.gearIsContainer').is(':checked') && name != originName){
-      html+= '<option value="'+name+'">'+name+'</option>';
+      html+= '<option value="'+name.replaceAll('\'','')+'">'+name+'</option>';
     }
   });
 
@@ -990,7 +990,7 @@ $('#Gear_Input').on('focus', '.gearContainer', function(){
     let name = $this.find('.gearName').val();
 
     if($this.find('.gearIsContainer').is(':checked') && name != originName){
-      html+= '<option value="'+name+'">'+name+'</option>';
+      html+= '<option value="'+name.replaceAll('\'','')+'">'+name+'</option>';
     }
   });
 
